@@ -1,0 +1,21 @@
+export const RIMWORLD_STATS_MAPPER: Record<number, string> = {
+  0: "Tötungen", 1: "Tötungen (menschlich)", 2: "Tötungen (Tiere)", 3: "Tötungen (Mechs)",
+  4: "Feinde zu Fall gebracht", 5: "Feinde zu Fall gebracht (menschlich)", 
+  6: "Feinde zu Fall gebracht (Tiere)", 7: "Feinde zu Fall gebracht (Mechs)",
+  8: "Schüsse abgegeben", 9: "Kopfschüsse", 10: "Schaden verursacht", 11: "Schaden erlitten",
+  12: "Nervenzusammenbrüche", 13: "Anzahl gebrannt", 14: "Feuer gelöscht",
+  15: "Operationen erhalten", 16: "Operationen durchgeführt", 17: "Behandlungen erhalten",
+  18: "Behandlungen durchgeführt", 19: "Personen eingefangen", 20: "Gefangene rekrutiert",
+  21: "Gefangenengespräche", 22: "Wildtiere gezähmt", 23: "Haustiere geschlachtet",
+  24: "Mahlzeiten gekocht", 25: "Objekte gebaut", 26: "Objekte montiert",
+  27: "Objekte repariert", 28: "Objekte hergestellt", 29: "Objekte weggetragen",
+  30: "Pflanzen angebaut", 31: "Pflanzen geerntet", 32: "Gesteine abgebaut",
+  33: "Schmutz entfernt", 34: "Forschungspunkte generiert", 35: "Leichen beerdigt",
+  36: "Nahrung gegessen", 37: "Körper entkleidet", 38: "Objekte demontiert",
+  39: "Objekte abgerissen", 40: "Artefakte aktiviert", 41: "Behälter geöffnet",
+  42: "Schalter umgelegt",
+  43: "Zeit als Kolonist", 44: "Zeit als Gast", 45: "Zeit als Gefangener",
+  46: "Zeit im Bett", 47: "Zeit im Bett (medizinisch)", 48: "Zeit am Boden",
+  49: "Zeit beim Essen", 50: "Zeit für Freizeit", 51: "Zeit unter einem Dach",
+  52: "Zeit im Kampfmodus", 53: "Zeit brennend", 54: "Zeit übergeschnappt"
+};
