@@ -4,7 +4,9 @@ import { JSX, useState } from "react";
 import { ParsedStats } from "@/lib/types";
 import {
   IntroSlide, KillStatsSlide, GraveyardSlide, DamageSlide, LogisticsSlide,
-  GluttonySlide, AwardsSlide, MedicalSlide, WarCrimesSlide, ConclusionSlide
+  GluttonySlide, AwardsSlide, MedicalSlide, WarCrimesSlide, ConclusionSlide,
+  StorytellerSlide, ChaosChronikSlide, RaidReportSlide, DisasterSlide,
+  WildlifeSlide, MentalStateSlide, EndingSlide
 } from "../slides/Slides";
 
 export default function WrappedView({ stats }: { stats: ParsedStats }) {
@@ -13,14 +15,21 @@ export default function WrappedView({ stats }: { stats: ParsedStats }) {
   // Filtert automatisch alle Slides aus, die null/false ergeben
   const slides = [
     <IntroSlide key="intro" stats={stats} />,
+    <StorytellerSlide key="storyteller" stats={stats} />,
     stats.global.killsTotal > 0 && <KillStatsSlide key="kills" stats={stats} />,
     stats.graveyard.total > 0 && <GraveyardSlide key="graveyard" stats={stats} />,
     <DamageSlide key="damage" stats={stats} />,
+    stats.topEvents.length > 0 && <ChaosChronikSlide key="chaos" stats={stats} />,
+    stats.events.raidCount > 0 && <RaidReportSlide key="raids" stats={stats} />,
+    (stats.events.toxicFalloutCount > 0 || stats.events.heatWaveCount > 0 || stats.events.coldSnapCount > 0 || stats.events.solarFlareCount > 0 || stats.events.eclipseCount > 0 || stats.events.volcanicWinterCount > 0 || stats.events.psychicDroneCount > 0) && <DisasterSlide key="disaster" stats={stats} />,
+    (stats.global.animalsTamed > 0 || stats.global.animalsSlaughtered > 0) && <WildlifeSlide key="wildlife" stats={stats} />,
+    stats.global.mentalBreaks > 0 && <MentalStateSlide key="mental" stats={stats} />,
     <LogisticsSlide key="logistics" stats={stats} />,
     <GluttonySlide key="gluttony" stats={stats} />,
     <AwardsSlide key="awards" stats={stats} />,
     <MedicalSlide key="medical" stats={stats} />,
     (stats.records.cannibalismCount > 0 || stats.records.butcheredHumanoids > 0) && <WarCrimesSlide key="warcrimes" stats={stats} />,
+    <EndingSlide key="ending" stats={stats} />,
     <ConclusionSlide key="conclusion" stats={stats} />
   ].filter(Boolean) as JSX.Element[];
 

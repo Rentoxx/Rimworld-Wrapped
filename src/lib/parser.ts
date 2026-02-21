@@ -6,7 +6,9 @@ export async function parseRimworldSave(file: File): Promise<ParsedStats> {
   const newStats: ParsedStats = {
     colonyName: "Deine Kolonie", playTimeTicks: 0, scenario: "Unbekannt", storyteller: "Unbekannt", difficulty: "Normal",
     topEvents: [],
-    records: { cannibalismCount: 0, butcheredHumanoids: 0, heatstrokes: 0, lovers: 0, raids: 0, organsHarvested: 0 },
+    records: { cannibalismCount: 0, butcheredHumanoids: 0, heatstrokes: 0, lovers: 0, raids: 0, organsHarvested: 0, prisonersRecruited: 0, prisonersCaptured: 0, firesFought: 0, timesSetOnFire: 0, researchPoints: 0, plantsHarvested: 0, plantsGrown: 0, artifactsActivated: 0, containersOpened: 0 },
+    events: { raidCount: 0, infestationCount: 0, solarFlareCount: 0, eclipseCount: 0, toxicFalloutCount: 0, coldSnapCount: 0, heatWaveCount: 0, manhunterCount: 0, traderCount: 0, transportPodCrashCount: 0, psychicDroneCount: 0, volcanicWinterCount: 0 },
+    ending: { type: "still_running", colonistsSurvived: 0, colonistsLost: 0, daysLasted: 0 },
     wealthHistory: [],
     global: { killsTotal: 0, killsHuman: 0, killsAnimal: 0, killsMech: 0, damageDealt: 0, damageTaken: 0, shotsFired: 0, headshots: 0, mealsCooked: 0, foodEaten: 0, itemsHauled: 0, dirtCleaned: 0, mentalBreaks: 0, animalsTamed: 0, animalsSlaughtered: 0, corpsesBuried: 0 },
     graveyard: { male: 0, female: 0, children: 0, total: 0 },
@@ -14,6 +16,7 @@ export async function parseRimworldSave(file: File): Promise<ParsedStats> {
   };
 
   const eventCounts: Record<string, number> = {};
+  const archivableDefCounts: Record<string, number> = {};
   let wealthBase64 = "";
   let isWealthDeflated = false;
   
@@ -133,6 +136,10 @@ export async function parseRimworldSave(file: File): Promise<ParsedStats> {
       }
 
       // EVENTS & TALES
+      if (isReadingArchivables && trimmedLine.startsWith("<def>")) {
+        const defName = trimmedLine.replace(/<\/?def>/g, "");
+        archivableDefCounts[defName] = (archivableDefCounts[defName] || 0) + 1;
+      }
       if (isReadingArchivables && trimmedLine.startsWith("<text>")) {
         let rawText = trimmedLine.replace(/<\/?text>/g, "").replace(/<color[^>]*>|<\/color>/g, "").replace(/\(\*[^)]+\)|\(\/[^)]+\)/g, "");
         if (!rawText.includes("ist voll verheilt") && !rawText.includes("Rettung benötigt")) {
@@ -172,7 +179,7 @@ export async function parseRimworldSave(file: File): Promise<ParsedStats> {
   
   if (currentPawn && currentPawn.isColonist) allColonists.push(currentPawn);
 
-  newStats.topEvents = Object.entries(eventCounts).sort((a, b) => b[1] - a[1]).map(([name, count]) => ({ name, count })).slice(0, 4);
+  newStats.topEvents = Object.entries(eventCounts).sort((a, b) => b[1] - a[1]).map(([name, count]) => ({ name, count })).slice(0, 5);
 
   // AGGREGATION
   const validColonists = allColonists.filter(c => c.first || c.nick).map(c => {
@@ -228,6 +235,43 @@ export async function parseRimworldSave(file: File): Promise<ParsedStats> {
       }
   }
   if (worstParasite) newStats.awards.pacifistParasite = { name: worstParasite.fullName, eaten: maxEatenByPacifist };
+
+  // NEW: Aggregate new records fields
+  validColonists.forEach(c => {
+    newStats.records.firesFought += c.records["Feuer gelöscht"] || 0;
+    newStats.records.timesSetOnFire += c.records["Anzahl gebrannt"] || 0;
+    newStats.records.prisonersCaptured += c.records["Personen eingefangen"] || 0;
+    newStats.records.prisonersRecruited += c.records["Gefangene rekrutiert"] || 0;
+    newStats.records.researchPoints += c.records["Forschungspunkte generiert"] || 0;
+    newStats.records.plantsHarvested += c.records["Pflanzen geerntet"] || 0;
+    newStats.records.plantsGrown += c.records["Pflanzen angebaut"] || 0;
+    newStats.records.artifactsActivated += c.records["Artefakte aktiviert"] || 0;
+    newStats.records.containersOpened += c.records["Behälter geöffnet"] || 0;
+  });
+
+  // NEW: Map archivable defs to events fields
+  newStats.events.raidCount = archivableDefCounts["RaidEnemy"] || 0;
+  newStats.events.infestationCount = archivableDefCounts["Infestation"] || 0;
+  newStats.events.solarFlareCount = archivableDefCounts["SolarFlare"] || 0;
+  newStats.events.eclipseCount = archivableDefCounts["Eclipse"] || 0;
+  newStats.events.toxicFalloutCount = archivableDefCounts["ToxicFallout"] || 0;
+  newStats.events.coldSnapCount = archivableDefCounts["ColdSnap"] || 0;
+  newStats.events.heatWaveCount = archivableDefCounts["HeatWave"] || 0;
+  newStats.events.manhunterCount = archivableDefCounts["ManhunterPack"] || 0;
+  newStats.events.traderCount = archivableDefCounts["TraderCaravanArrival"] || 0;
+  newStats.events.transportPodCrashCount = archivableDefCounts["ResourcePodCrash"] || 0;
+  newStats.events.psychicDroneCount = archivableDefCounts["PsychicDrone"] || 0;
+  newStats.events.volcanicWinterCount = archivableDefCounts["VolcanicWinter"] || 0;
+
+  // NEW: Calculate ending fields
+  newStats.ending.daysLasted = Math.floor(newStats.playTimeTicks / 60000);
+  newStats.ending.colonistsSurvived = newStats.awards.totalColonists;
+  newStats.ending.colonistsLost = newStats.graveyard.total;
+  const defNames = Object.keys(archivableDefCounts);
+  if (defNames.some(d => d.toLowerCase().includes("archonexus"))) newStats.ending.type = "archonexus";
+  else if (defNames.some(d => d === "RoyalAscent" || d.toLowerCase().includes("royal"))) newStats.ending.type = "royalty_ending";
+  else if (defNames.some(d => d === "GameOverLost" || d.toLowerCase().includes("gameover"))) newStats.ending.type = "colony_lost";
+  else if (defNames.some(d => d === "ShipLaunchNotification" || d.toLowerCase().includes("ship"))) newStats.ending.type = "ship_launched";
 
   // Wealth Decoding
   if (wealthBase64) {

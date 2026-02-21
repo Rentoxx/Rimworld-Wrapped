@@ -200,3 +200,190 @@ export const ConclusionSlide = ({ stats }: { stats: ParsedStats }) => (
     )}
   </div>
 );
+
+export const ChaosChronikSlide = ({ stats }: { stats: ParsedStats }) => {
+  const max = stats.topEvents[0]?.count || 1;
+  return (
+    <div className="flex-1 flex flex-col px-8 justify-center relative bg-purple-950/20">
+      <p className="text-purple-400 font-bold tracking-widest text-xs mb-2 uppercase">🔮 Chaos-Chronik</p>
+      <h2 className="text-4xl font-black text-white leading-tight mb-6">Deine Top Events</h2>
+      <div className="space-y-3">
+        {stats.topEvents.map((event, i) => (
+          <div key={i}>
+            <div className="flex justify-between text-xs mb-1">
+              <span className="text-zinc-300 truncate max-w-[70%]">{event.name}</span>
+              <span className="text-purple-400 font-bold">{event.count}×</span>
+            </div>
+            <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+              <div className="h-full bg-purple-500 rounded-full" style={{ width: `${(event.count / max) * 100}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const RaidReportSlide = ({ stats }: { stats: ParsedStats }) => (
+  <div className="flex-1 flex flex-col px-8 justify-center relative bg-amber-950/20">
+    <p className="text-amber-400 font-bold tracking-widest text-xs mb-2 uppercase">⚔️ Raid-Report</p>
+    <h2 className="text-4xl font-black text-white leading-tight mb-4">Überlebte Raids</h2>
+    <div className="bg-amber-900/20 p-6 rounded-3xl border border-amber-500/20 text-center mb-6">
+      <p className="text-7xl font-black text-amber-400">{stats.events.raidCount}</p>
+      <p className="text-amber-200 font-medium mt-1">feindliche Überfälle</p>
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div className="bg-black/40 p-4 rounded-2xl text-center">
+        <p className="text-3xl font-black text-white">{stats.records.prisonersCaptured}</p>
+        <p className="text-xs text-zinc-400 uppercase mt-1">Gefangene</p>
+      </div>
+      <div className="bg-black/40 p-4 rounded-2xl text-center">
+        <p className="text-3xl font-black text-white">{stats.records.prisonersRecruited}</p>
+        <p className="text-xs text-zinc-400 uppercase mt-1">Rekrutiert</p>
+      </div>
+    </div>
+  </div>
+);
+
+export const DisasterSlide = ({ stats }: { stats: ParsedStats }) => {
+  const disasters = [
+    { icon: "☣️", label: "Toxic Fallout", count: stats.events.toxicFalloutCount },
+    { icon: "🔥", label: "Hitzewelle", count: stats.events.heatWaveCount },
+    { icon: "❄️", label: "Cold Snap", count: stats.events.coldSnapCount },
+    { icon: "⚡", label: "Solar Flare", count: stats.events.solarFlareCount },
+    { icon: "🌑", label: "Eclipse", count: stats.events.eclipseCount },
+    { icon: "🌋", label: "Volcanic Winter", count: stats.events.volcanicWinterCount },
+    { icon: "🧠", label: "Psychic Drone", count: stats.events.psychicDroneCount },
+  ].filter(d => d.count > 0);
+
+  if (disasters.length === 0) return null;
+
+  return (
+    <div className="flex-1 flex flex-col px-8 justify-center relative bg-teal-950/20">
+      <p className="text-teal-400 font-bold tracking-widest text-xs mb-2 uppercase">🌋 Naturkatastrophen</p>
+      <h2 className="text-4xl font-black text-white leading-tight mb-6">Das Wetter meinte es ernst</h2>
+      <div className="space-y-3">
+        {disasters.map((d, i) => (
+          <div key={i} className="flex justify-between items-center bg-teal-900/20 p-4 rounded-xl border border-teal-500/20">
+            <span className="text-zinc-300">{d.icon} {d.label}</span>
+            <span className="font-bold text-teal-400 text-xl">{d.count}×</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const WildlifeSlide = ({ stats }: { stats: ParsedStats }) => (
+  <div className="flex-1 flex flex-col px-8 justify-center relative bg-lime-950/20">
+    <p className="text-lime-400 font-bold tracking-widest text-xs mb-2 uppercase">🐾 Tierleben</p>
+    <h2 className="text-4xl font-black text-white leading-tight mb-6">Freund oder Feind?</h2>
+    <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="bg-lime-900/20 p-5 rounded-2xl border border-lime-500/20 text-center">
+        <p className="text-3xl font-black text-lime-400">{stats.global.animalsTamed}</p>
+        <p className="text-xs text-lime-200 uppercase mt-2">Gezähmt</p>
+      </div>
+      <div className="bg-lime-900/20 p-5 rounded-2xl border border-lime-500/20 text-center">
+        <p className="text-3xl font-black text-lime-400">{stats.global.animalsSlaughtered}</p>
+        <p className="text-xs text-lime-200 uppercase mt-2">Geschlachtet</p>
+      </div>
+    </div>
+    {stats.events.manhunterCount > 0 && (
+      <div className="bg-red-950/40 border border-red-500/30 p-4 rounded-2xl text-center">
+        <p className="text-2xl font-black text-red-400">{stats.events.manhunterCount}× Manhunter-Pack</p>
+        <p className="text-xs text-red-300 mt-1">Wütende Herden haben deine Kolonie gestürmt.</p>
+      </div>
+    )}
+  </div>
+);
+
+export const MentalStateSlide = ({ stats }: { stats: ParsedStats }) => (
+  <div className="flex-1 flex flex-col px-8 justify-center relative bg-fuchsia-950/20">
+    <p className="text-fuchsia-400 font-bold tracking-widest text-xs mb-2 uppercase">🧠 Mentale Gesundheit</p>
+    <h2 className="text-4xl font-black text-white leading-tight mb-6">Am Limit</h2>
+    <div className="bg-fuchsia-900/20 p-6 rounded-3xl border border-fuchsia-500/20 text-center mb-4">
+      <p className="text-7xl font-black text-fuchsia-400">{stats.global.mentalBreaks}</p>
+      <p className="text-fuchsia-200 font-medium mt-1">Nervenzusammenbrüche</p>
+    </div>
+    <div className="grid grid-cols-2 gap-3">
+      {stats.records.heatstrokes > 0 && (
+        <div className="bg-black/40 p-4 rounded-2xl text-center">
+          <p className="text-2xl font-black text-orange-400">{stats.records.heatstrokes}</p>
+          <p className="text-xs text-zinc-400 uppercase mt-1">Hitzschläge</p>
+        </div>
+      )}
+      {stats.awards.pyromaniac && (
+        <div className="bg-black/40 p-4 rounded-2xl text-center">
+          <p className="text-sm font-bold text-red-400">🔥 Pyromaniac</p>
+          <p className="text-xs text-white mt-1">{stats.awards.pyromaniac.name}</p>
+          <p className="text-xs text-zinc-400">{stats.awards.pyromaniac.fires} Brände</p>
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+const storytellerColors = {
+  CassandraClassic: { bg: "bg-rose-950/20", border: "border-rose-500/20", accent: "text-rose-400", card: "bg-rose-900/20", cardBorder: "border-rose-500/30", quote: "\"Jede Entscheidung hat ihren Preis.\"" },
+  RandyRandom:      { bg: "bg-amber-950/20", border: "border-amber-500/20", accent: "text-amber-400", card: "bg-amber-900/20", cardBorder: "border-amber-500/30", quote: "\"Ich hab' keine Ahnung, was als nächstes passiert.\"" },
+  PhoebeChillax:    { bg: "bg-sky-950/20", border: "border-sky-500/20", accent: "text-sky-400", card: "bg-sky-900/20", cardBorder: "border-sky-500/30", quote: "\"Entspann dich. Meistens.\"" },
+};
+const defaultStorytellerColor = { bg: "bg-zinc-950/20", border: "border-zinc-500/20", accent: "text-zinc-400", card: "bg-zinc-900/20", cardBorder: "border-zinc-500/30", quote: "\"Das Rim hat seine eigenen Regeln.\"" };
+
+export const StorytellerSlide = ({ stats }: { stats: ParsedStats }) => {
+  const colors = storytellerColors[stats.storyteller as keyof typeof storytellerColors] ?? defaultStorytellerColor;
+  return (
+    <div className={`flex-1 flex flex-col px-8 justify-center relative ${colors.bg}`}>
+      <p className={`${colors.accent} font-bold tracking-widest text-xs mb-2 uppercase`}>🎭 Dein Storyteller</p>
+      <h2 className="text-4xl font-black text-white leading-tight mb-2">{stats.storyteller}</h2>
+      <p className={`${colors.accent} italic text-sm mb-6`}>{colors.quote}</p>
+      <div className={`${colors.card} p-5 rounded-2xl border ${colors.cardBorder} space-y-3`}>
+        <div className="flex justify-between items-center">
+          <span className="text-zinc-400 text-sm">Szenario</span>
+          <span className="font-bold text-white">{stats.scenario}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-zinc-400 text-sm">Schwierigkeit</span>
+          <span className="font-bold text-white">{stats.difficulty}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-zinc-400 text-sm">Überlebte Tage</span>
+          <span className={`font-black text-xl ${colors.accent}`}>{stats.ending.daysLasted}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const endingConfig = {
+  ship_launched:  { bg: "bg-blue-950/20", accent: "text-blue-400", card: "bg-blue-900/20", cardBorder: "border-blue-500/30", emoji: "🚀", title: "Schiff gestartet!", desc: "Ihr habt es geschafft – Freiheit unter den Sternen." },
+  royalty_ending: { bg: "bg-yellow-950/20", accent: "text-yellow-400", card: "bg-yellow-900/20", cardBorder: "border-yellow-500/30", emoji: "👑", title: "Königliches Ende", desc: "Adel verpflichtet – und rettet." },
+  archonexus:     { bg: "bg-violet-950/20", accent: "text-violet-400", card: "bg-violet-900/20", cardBorder: "border-violet-500/30", emoji: "🌌", title: "Archonexus erreicht", desc: "Jenseits der menschlichen Vorstellung." },
+  colony_lost:    { bg: "bg-red-950/20", accent: "text-red-400", card: "bg-red-900/20", cardBorder: "border-red-500/30", emoji: "💀", title: "Kolonie verloren", desc: "Das Rim hat gewonnen. Diesmal." },
+  still_running:  { bg: "bg-emerald-950/20", accent: "text-emerald-400", card: "bg-emerald-900/20", cardBorder: "border-emerald-500/30", emoji: "⏳", title: "Noch am Laufen", desc: "Die Geschichte ist noch nicht zu Ende." },
+  unknown:        { bg: "bg-zinc-950/20", accent: "text-zinc-400", card: "bg-zinc-900/20", cardBorder: "border-zinc-500/30", emoji: "❓", title: "Unbekanntes Ende", desc: "Was auch immer passiert ist – du hast es erlebt." },
+};
+
+export const EndingSlide = ({ stats }: { stats: ParsedStats }) => {
+  const cfg = endingConfig[stats.ending.type] ?? endingConfig.unknown;
+  return (
+    <div className={`flex-1 flex flex-col px-8 justify-center relative ${cfg.bg}`}>
+      <p className={`${cfg.accent} font-bold tracking-widest text-xs mb-2 uppercase`}>Kapitel-Ende</p>
+      <div className="text-6xl mb-4">{cfg.emoji}</div>
+      <h2 className="text-4xl font-black text-white leading-tight mb-2">{cfg.title}</h2>
+      <p className={`${cfg.accent} text-sm mb-6`}>{cfg.desc}</p>
+      <div className={`${cfg.card} p-5 rounded-2xl border ${cfg.cardBorder}`}>
+        <div className="grid grid-cols-2 gap-4 text-center">
+          <div>
+            <p className={`text-3xl font-black ${cfg.accent}`}>{stats.ending.colonistsSurvived}</p>
+            <p className="text-xs text-zinc-400 uppercase mt-1">Überlebende</p>
+          </div>
+          <div>
+            <p className="text-3xl font-black text-red-400">{stats.ending.colonistsLost}</p>
+            <p className="text-xs text-zinc-400 uppercase mt-1">Verloren</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
