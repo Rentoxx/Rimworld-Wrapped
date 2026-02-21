@@ -12,6 +12,37 @@ export type ParsedStats = {
     lovers: number;
     raids: number;
     organsHarvested: number;
+    prisonersRecruited: number;
+    prisonersCaptured: number;
+    firesFought: number;
+    timesSetOnFire: number;
+    researchPoints: number;
+    plantsHarvested: number;
+    plantsGrown: number;
+    artifactsActivated: number;
+    containersOpened: number;
+  };
+
+  events: {
+    raidCount: number;
+    infestationCount: number;
+    solarFlareCount: number;
+    eclipseCount: number;
+    toxicFalloutCount: number;
+    coldSnapCount: number;
+    heatWaveCount: number;
+    manhunterCount: number;
+    traderCount: number;
+    transportPodCrashCount: number;
+    psychicDroneCount: number;
+    volcanicWinterCount: number;
+  };
+
+  ending: {
+    type: "ship_launched" | "royalty_ending" | "archonexus" | "colony_lost" | "still_running" | "unknown";
+    colonistsSurvived: number;
+    colonistsLost: number;
+    daysLasted: number;
   };
   wealthHistory: number[];
   
